@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:project/screens/chat_screen.dart';
 import 'package:project/screens/course_module.dart';
 import 'package:provider/provider.dart';
 import 'package:project/providers/course_detail_provider.dart';
 import 'package:project/models/course_detail_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CourseDetailScreen extends StatefulWidget {
   final String id;
@@ -14,13 +16,29 @@ class CourseDetailScreen extends StatefulWidget {
 }
 
 class _CourseDetailScreenState extends State<CourseDetailScreen> {
+  String? accessToken;
+  String? userId;
   @override
   void initState() {
     super.initState();
+    _loadUserData();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<CourseDetailProvider>(context, listen: false)
           .fetchCourseDetail(widget.id);
     });
+  }
+
+  /// Fetch token & userId from SharedPreferences
+  Future<void> _loadUserData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      accessToken = prefs.getString("accessToken");
+      userId =
+          prefs.getString("userId"); // Ensure you stored `userId` during login
+    });
+
+    print("Token: $accessToken");
+    print("User ID: $userId");
   }
 
   @override
@@ -46,12 +64,41 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
     }
 
     final CourseInfo course = courseProvider.courseDetail!.course;
+    final List<String> purchasedCourses =
+        courseProvider.courseDetail!.purchasedCourses;
+    bool isPurchased = purchasedCourses.contains(course.id);
     final TutorDetails tutor = course.tutor;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(course.title),
         backgroundColor: Colors.teal[100],
+        actions: [
+          // Show chat icon only if the course is purchased
+          if (isPurchased)
+            IconButton(
+              icon: const Icon(Icons.chat, color: Colors.black),
+              onPressed: () {
+                if (accessToken != null && userId != null) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ChatScreen(
+                        tutorname: tutor.name,
+                        token: accessToken!,
+                        senderId: userId!,
+                        receiverId: tutor.id,
+                      ),
+                    ),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("User data is not loaded yet!")),
+                  );
+                }
+              },
+            ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -167,30 +214,32 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                     subtitle: Text('Duration: ${module.duration} minutes'),
                     trailing: Text(module.status),
                   )),
-                  ElevatedButton(
-  onPressed: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => CourseModulesScreen(
-          modules: course.modules,
-          courseTitle: course.title,
-        ),
-      ),
-    );
-  },
-  style: ElevatedButton.styleFrom(
-    backgroundColor: Colors.teal[100],
-    minimumSize: const Size(double.infinity, 50),
-  ),
-  child: const Text(
-    'View Course Modules',
-    style: TextStyle(
-      color: Colors.black,
-      fontWeight: FontWeight.bold,
-    ),
-  ),
-),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CourseModulesScreen(
+                        modules: course.modules,
+                        courseTitle: course.title,
+                        courseId: course.id,
+                        purchasedCourses: purchasedCourses,
+                      ),
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.teal[100],
+                  minimumSize: const Size(double.infinity, 50),
+                ),
+                child: const Text(
+                  'View Course Modules',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
             ],
           ),
         ),

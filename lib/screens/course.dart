@@ -91,14 +91,14 @@ class CourseScreen extends StatefulWidget {
 }
 
 class _CourseScreenState extends State<CourseScreen> {
-  final Debouncer _debouncer = Debouncer(delay: Duration(seconds: 3));
+  final Debouncer _debouncer = Debouncer(delay: Duration(seconds: 1));
 
   // Search controller
   final TextEditingController _searchController = TextEditingController();
 
   // Sort and filter variables
   String _selectedSort = 'newest';
-  String _selectedFilter = 'all';
+  String _selectedFilter = '';
 
   @override
   void initState() {
@@ -272,8 +272,7 @@ class _CourseScreenState extends State<CourseScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                CourseDetailScreen(id: "6777712ef8763cba1a3b1336",),
+                            builder: (context) => CourseDetailScreen(id: course['courseId']),
                           ),
                         );
                       },

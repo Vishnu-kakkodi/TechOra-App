@@ -145,15 +145,26 @@ static const Map<String, String> roleHeader = {"role": "user"};
 
         final String accessToken = data['data']['accessToken']?.toString() ?? "";
         final String refreshToken = data['data']['refreshToken']?.toString() ?? "";
+        final String userName = data['data']['userName']?.toString() ?? "";
+        final String phoneNumber = data['data']['phoneNumber']?.toString() ?? "";
+        final String profilePhoto = data['data']['profilePhoto']?.toString() ?? "";
+        final String email = data['data']['email']?.toString() ?? "";
+        final String userId = data['data']['_id']?.toString() ?? "";
+
 
         if (accessToken.isEmpty || refreshToken.isEmpty) {
           return {"success": false, "message": "Invalid response from server"};
         }
 
         SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString("name", userName);
+        await prefs.setString("email", email);
+        await prefs.setString("phoneNumber", phoneNumber);
+        await prefs.setString("profilePhoto", profilePhoto);
         await prefs.setString("accessToken", accessToken);
         await prefs.setString("refreshToken", refreshToken);
         await prefs.setString("role", 'user');
+        await prefs.setString("userId", userId);
         return {"success": true, "data": data};
       } else {
         return {"success": false, "message": response.body};
@@ -244,7 +255,7 @@ static const Map<String, String> roleHeader = {"role": "user"};
 
    static Future<Map<String, dynamic>> fetchCourseDetail(String courseId) async {
   try {
-    final Uri url = Uri.parse('$_baseUrl/users/course-detail/6777712ef8763cba1a3b1336');
+    final Uri url = Uri.parse('$_baseUrl/users/course-detail/$courseId');
     final Map<String, String> headers = await _getHeaders();
 
     final response = await http.get(url, headers: headers);
@@ -256,6 +267,28 @@ static const Map<String, String> roleHeader = {"role": "user"};
     };
   }
 }
+
+
+static Future<bool> updateProfile(String field, String value) async {
+    try {
+      final Uri url = Uri.parse('$_baseUrl/users/profile-update');
+      final Map<String, String> headers = await _getHeaders();
+      final Map<String, dynamic> body = {field: value};
+      print('$jsonEncode(body),hhhhhhhhhhhhhhhhh');
+      final response = await http.put(url, headers: headers,  body: jsonEncode(body));
+      if (response.statusCode == 200) {
+        print("Profile updated successfully: ${response.body}");
+        return true;
+      } else {
+        print("Failed to update profile: ${response.body}");
+        return false;
+      }
+    } catch (e) {
+      print("Error updating profile: $e");
+      return false;
+    }
+  }
+
 
 }
 

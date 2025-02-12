@@ -7,7 +7,9 @@ import 'package:project/providers/course_provider.dart';
 import 'package:project/providers/winners_provider.dart';
 import 'package:project/screens/login.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   runApp(
     MultiProvider(
       providers: [
@@ -16,7 +18,6 @@ void main() {
         ChangeNotifierProvider(create: (context) => CourseProvider()),
         ChangeNotifierProvider(create: (context) => CourseListProvider()),
         ChangeNotifierProvider(create: (_) => CourseDetailProvider()),
-
       ],
       child: const MyApp(),
     ),

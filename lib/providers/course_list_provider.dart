@@ -65,6 +65,7 @@ class CourseListProvider with ChangeNotifier {
       if (result["success"]) {
         courseData = (result["data"] as List)
             .map((course) => {
+                  'courseId': course['_id'] ?? 'Unknown',
                   'title': course['title'] ?? 'Unknown',
                   'thumbnail': course['thumbnail'] ?? '',
                   'tutorname': course['tutorId']?['tutorname'] ?? '',
