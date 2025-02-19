@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:project/providers/course_provider.dart';
 import 'package:project/providers/winners_provider.dart';
+import 'package:project/screens/account.dart';
 import 'package:project/widgets/winners_carousel.dart';
 import 'package:project/widgets/course_card.dart';
 import 'package:provider/provider.dart';
@@ -24,7 +25,7 @@ class _MainScreenState extends State<MainScreen> {
     const CourseScreen(),
     const QuizScreen(),
     const CartScreen(),
-    const ProfileScreen(),
+    const AccountScreen(),
   ];
 
   @override
@@ -68,7 +69,7 @@ class _MainScreenState extends State<MainScreen> {
             _buildNavItem(Icons.book_rounded, Icons.book_outlined, 'Courses', 1),
             _buildNavItem(Icons.quiz_rounded, Icons.quiz_outlined, 'Quiz', 2),
             _buildNavItem(Icons.shopping_cart_rounded, Icons.shopping_cart_outlined, 'Cart', 3),
-            _buildNavItem(Icons.person_rounded, Icons.person_outline_rounded, 'Profile', 4),
+            _buildNavItem(Icons.person_rounded, Icons.person_outline_rounded, 'Account', 4),
           ],
         ),
       ),

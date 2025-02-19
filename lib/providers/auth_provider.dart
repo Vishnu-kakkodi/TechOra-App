@@ -22,6 +22,23 @@ class AuthProvider with ChangeNotifier {
       return false;
     }
   }
+
+Future<bool> register(String userName, String email, String password, String phoneNumber) async {
+  _isLoading = true;
+  notifyListeners();
+  
+  final result = await ApiService.register(userName, email, password, phoneNumber);
+
+  _isLoading = false;
+  notifyListeners();
+
+  if (result["success"]) {
+  print("Login successful");
+    return true;
+  } else {
+    return false;
+  }
+}
 }
 
 

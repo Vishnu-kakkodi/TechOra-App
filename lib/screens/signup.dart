@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:project/providers/auth_provider.dart';
 import 'package:project/screens/login.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -12,12 +14,23 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPageState extends State<SignUpPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
 
+  // Validation functions
   String? _validateUsername(String? value) {
     if (value == null || value.isEmpty) return "Username is required";
     if (value.length < 3) return "Username must be at least 3 characters";
+    return null;
+  }
+
+  String? _validateEmail(String? value) {
+    if (value == null || value.isEmpty) return "Email is required";
+    if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) return "Enter a valid email";
     return null;
   }
 
@@ -40,17 +53,32 @@ class _SignUpPageState extends State<SignUpPage> {
     return null;
   }
 
-  void _submitForm() {
+  Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Sign Up Successful!")),
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+      bool success = await authProvider.register(
+        _usernameController.text,
+        _emailController.text,
+        _passwordController.text,
+        _phoneController.text,
       );
-      // TODO: Implement actual signup logic
+
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Sign Up Successful!")),
+        );
+        Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (_) => LoginPage()));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Sign Up Failed. Try again.")),
+        );
+      }
     }
   }
 
   void _navigateToLogin() {
-    // TODO: Replace with your actual login page route
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => LoginPage()));
   }
 
@@ -80,6 +108,8 @@ class _SignUpPageState extends State<SignUpPage> {
                   const SizedBox(height: 20),
                   _buildUsernameField(),
                   const SizedBox(height: 16),
+                  _buildEmailField(),
+                  const SizedBox(height: 16),
                   _buildPhoneNumberField(),
                   const SizedBox(height: 16),
                   _buildPasswordField(),
@@ -100,7 +130,8 @@ class _SignUpPageState extends State<SignUpPage> {
 
   Widget _buildUsernameField() {
     return TextFormField(
-      decoration: _inputDecoration('Username', Icons.person_outline),
+      controller: _usernameController,
+      decoration: _inputDecoration('UserName', Icons.person_outline),
       validator: _validateUsername,
       inputFormatters: [
         FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9]')),
@@ -108,8 +139,18 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
+  Widget _buildEmailField() {
+    return TextFormField(
+      controller: _emailController,
+      decoration: _inputDecoration('Email', Icons.email_outlined),
+      keyboardType: TextInputType.emailAddress,
+      validator: _validateEmail,
+    );
+  }
+
   Widget _buildPhoneNumberField() {
     return TextFormField(
+      controller: _phoneController,
       decoration: _inputDecoration('Phone Number', Icons.phone_outlined),
       keyboardType: TextInputType.phone,
       validator: _validatePhoneNumber,
@@ -211,19 +252,6 @@ class _SignUpPageState extends State<SignUpPage> {
       suffixIcon: suffixIcon,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(color: Colors.grey.shade300),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(color: Colors.grey.shade300),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(color: Colors.amber.shade800, width: 2),
-      ),
-      errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: Colors.red),
       ),
     );
   }

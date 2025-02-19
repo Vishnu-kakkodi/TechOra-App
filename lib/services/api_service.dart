@@ -165,7 +165,38 @@ static const Map<String, String> roleHeader = {"role": "user"};
         await prefs.setString("refreshToken", refreshToken);
         await prefs.setString("role", 'user');
         await prefs.setString("userId", userId);
+        await prefs.setBool("isLoggedIn", true);
         return {"success": true, "data": data};
+      } else {
+        return {"success": false, "message": response.body};
+      }
+    } catch (error) {
+      return {"success": false, "message": "Error: $error"};
+    }
+  }
+
+  static Future<Map<String, dynamic>> register( String userName, String email, String password, String phoneNumber) async {
+    final String url = "$_baseUrl/users/register";
+    final Map<String, String> body = {
+      "name": userName,
+      "email": email,
+      "password": password,
+      "phoneNumber": phoneNumber
+    };
+
+    try {
+      print("📝 Registering User: $body");
+
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(body),
+      );
+
+      print("🔹 Register Response: ${response.body}");
+
+      if (response.statusCode == 200) {
+        return {"success": true, "message": "User registered successfully!"};
       } else {
         return {"success": false, "message": response.body};
       }
@@ -286,6 +317,62 @@ static Future<bool> updateProfile(String field, String value) async {
     } catch (e) {
       print("Error updating profile: $e");
       return false;
+    }
+  }
+
+
+  static Future<Map<String, dynamic>> changePassword({
+  required String currentPassword,
+  required String newPassword,
+}) async {
+  final String url = "$_baseUrl/users/change-password";
+
+  try {
+    final headers = await _getHeaders();
+    final Map<String, String> body = {
+      "currentPassword": currentPassword,
+      "newPassword": newPassword,
+    };
+
+    print("🔹 Sending Change Password Request: $body");
+
+    final response = await http.patch(
+      Uri.parse(url),
+      headers: headers,
+      body: jsonEncode(body),
+    );
+
+    print("🔹 Change Password Response: ${response.statusCode}");
+  final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+
+
+    if (jsonResponse["status"] == 201) {
+      return {"success": true, "message": jsonResponse["message"] ?? "Password changed successfully"};
+    } else {
+      return {
+        "success": false,
+        "message": jsonResponse["message"] ?? "Failed to change password"
+      };
+    }
+  } catch (error) {
+    return {"success": false, "message": "Error: $error"};
+  }
+}
+
+
+  static Future<Map<String, dynamic>> fetchLeaderBoard() async {
+    try {
+      final Uri url = Uri.parse('$_baseUrl/users/leaderBoard');
+      final Map<String, String> headers = await _getHeaders();
+
+      final response = await http.get(url, headers: headers);
+      print('datafetchhhhhhhhhhhhhhhh,${json.decode(response.body)}');
+      return json.decode(response.body);
+    } catch (error) {
+      return {
+        'status': 500,
+        'message': 'Error: $error'
+      };
     }
   }
 
