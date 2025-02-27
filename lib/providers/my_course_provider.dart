@@ -2,28 +2,28 @@
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
 
-class CourseListProvider with ChangeNotifier {
+class MyCourseListProvider with ChangeNotifier {
   List<Map<String, dynamic>> courseData = [];
   bool isLoading = false;
   bool hasError = false;
   String errorMessage = '';
 
-  Future<void> fetchCourseData(search,sort,filter) async {
+  Future<void> fetchMyCourseData(search) async {
     // Start loading immediately
     isLoading = true;
     hasError = false;
     notifyListeners();
 
     try {
-      final result = await ApiService.fetchAllCourse(
+      final result = await ApiService.fetchMyCourse(
         page: 1,
         limit: 20,
         search: search,
-        filter: filter,
-        sort: sort,
       );
+      print(result["data"]);
 
       if (result["success"]) {
+        print("jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj");
         courseData = (result["data"] as List)
             .map((course) => {
                   'courseId': course['_id'] ?? 'Unknown',
@@ -38,9 +38,11 @@ class CourseListProvider with ChangeNotifier {
                   'enrolledStudents': course['enrolledStudents'] ?? 0
                 })
             .toList();
+            print("ffffffffffffffffffffffffffffffffffffffff"); 
         
         isLoading = false;
       } else {
+        print('object');
         hasError = true;
         errorMessage = result["message"] ?? "Failed to load courses";
         isLoading = false;

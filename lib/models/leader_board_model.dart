@@ -3,7 +3,7 @@ class UserData {
   final String name;
   final String photoUrl;
   final int score;
-  final double progress; // From 0.0 to 1.0
+  final String progress; // From 0.0 to 1.0
   final bool isCurrentUser;
 
   UserData({

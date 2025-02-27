@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:project/providers/cart_provider.dart';
 import 'package:project/providers/course_detail_provider.dart';
 import 'package:project/providers/course_list_provider.dart';
 import 'package:project/providers/leader_board_provider.dart';
+import 'package:project/providers/my_course_provider.dart';
+import 'package:project/providers/order_datail_provider.dart';
+import 'package:project/providers/order_list_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:project/providers/auth_provider.dart';
 import 'package:project/providers/course_provider.dart';
@@ -20,6 +24,11 @@ void main() async {
         ChangeNotifierProvider(create: (context) => CourseListProvider()),
         ChangeNotifierProvider(create: (_) => CourseDetailProvider()),
         ChangeNotifierProvider(create: (_) => LeaderboardProvider()),
+        ChangeNotifierProvider(create: (context) => MyCourseListProvider()),
+        ChangeNotifierProvider(create: (context) => OrderListProvider()),
+        ChangeNotifierProvider(create: (context) => OrderDetailProvider()),
+        ChangeNotifierProvider(create: (context) => CartProvider()),
+
       ],
       child: const MyApp(),
     ),
@@ -39,10 +48,6 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-
-
-
 
 // import 'package:flutter/material.dart';
 // import 'package:project/providers/course_detail_provider.dart';

@@ -8,8 +8,23 @@ class QuizScreen extends StatefulWidget {
 }
 
 class _QuizScreenState extends State<QuizScreen> {
+  int counter = 0;
+
+  void increment (){
+    setState(() {
+      counter++;
+    });
+  } 
+
+
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return  Scaffold(
+      body: Center(
+        child: ElevatedButton(onPressed: (){
+          increment();
+        }, child: Text(counter.toString())),
+      ),
+    );
   }
 } 

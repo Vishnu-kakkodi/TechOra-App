@@ -88,9 +88,7 @@ class LeaderboardProvider with ChangeNotifier {
             photoUrl:
                 userData['profilePhoto'] ?? 'https://via.placeholder.com/150',
             score: quizProgress['score'] ?? 0,
-            progress: double.tryParse(
-                    quizProgress['progress'].toString().replaceAll('+', '')) ??
-                0.0,
+            progress: quizProgress['progress'],
             isCurrentUser: userId ==
                 currentUserId, // Compare API user ID with logged-in user ID
           );

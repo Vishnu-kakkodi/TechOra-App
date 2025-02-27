@@ -32,7 +32,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     setState(() {
       name = prefs.getString("name") ?? "";
       email = prefs.getString("email") ?? "";
-      mobile = prefs.getString("mobile") ?? "+91 9876543210";
+      mobile = prefs.getString("phoneNumber") ?? "+91 9876543210";
       imageUrl = prefs.getString("profilePhoto");
     });
     print('Imagepathhhhhhhhhhhhhhhhhhh,$imageUrl');
@@ -186,12 +186,12 @@ Future<void> _editField(String field, String currentValue) async {
         title: const Text(
           "Profile",
           style: TextStyle(
-            color: Colors.brown,
+            color: Colors.black,
             fontSize: 25,
           ),
         ),
         centerTitle: true,
-        backgroundColor: Colors.teal[100],
+        backgroundColor: Colors.indigo,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -203,9 +203,7 @@ Future<void> _editField(String field, String currentValue) async {
               children: [
                 CircleAvatar(
                   radius: 60,
-                  backgroundImage: NetworkImage(
-                          "https://techora-aws-s3-bucket1.s3.ap-south-1.amazonaws.com/user_photo/2025/1736753167980_WhatsApp_Image_2025-01-13_at_10.15.49_341a8a0d.jpg")
-                      as ImageProvider,
+                  backgroundImage: NetworkImage('$imageUrl'),
                 ),
                 Positioned(
                   bottom: 0,

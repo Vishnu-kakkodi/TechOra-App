@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:project/screens/change_password.dart';
 import 'package:project/screens/leader_board.dart';
 import 'package:project/screens/login.dart';
+import 'package:project/screens/my_coures.dart';
+import 'package:project/screens/order.dart';
+import 'package:project/screens/profile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AccountScreen extends StatefulWidget {
@@ -13,9 +16,26 @@ class AccountScreen extends StatefulWidget {
 
 class _AccountScreenState extends State<AccountScreen> {
   // Sample user data
-  final String userName = "John Doe";
-  final String userEmail = "john.doe@example.com";
-  final String userAvatar = "https://randomuser.me/api/portraits/men/1.jpg";
+
+  String name = "";
+  String email = "";
+  String? imageUrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      name = prefs.getString("name") ?? "";
+      email = prefs.getString("email") ?? "";
+      imageUrl = prefs.getString("profilePhoto");
+    });
+    print('Imagepathhhhhhhhhhhhhhhhhhh,$imageUrl');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +67,7 @@ class _AccountScreenState extends State<AccountScreen> {
           children: [
             CircleAvatar(
               radius: 40,
-              backgroundImage: NetworkImage(userAvatar),
+              backgroundImage: NetworkImage('$imageUrl'),
             ),
             const SizedBox(width: 24),
             Expanded(
@@ -55,13 +75,13 @@ class _AccountScreenState extends State<AccountScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    userName,
+                    name,
                     style: const TextStyle(
                         fontSize: 18, fontWeight: FontWeight.w500),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    userEmail,
+                    email,
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.grey[600],
@@ -86,32 +106,56 @@ class _AccountScreenState extends State<AccountScreen> {
             _buildNavigationItem(
               icon: Icons.person,
               title: 'My Profile',
-              onTap: () => _navigateTo(context, 'profile'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ProfileScreen(),
+                  ),
+                );
+              },
             ),
             _buildDivider(),
+            SizedBox(
+              height: 15,
+            ),
             _buildNavigationItem(
               icon: Icons.shopping_bag,
               title: 'My Orders',
-              onTap: () => _navigateTo(context, 'orders'),
+              onTap: (){
+                Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const OrderListPage()));
+              }
             ),
             _buildDivider(),
+            SizedBox(
+              height: 15,
+            ),
             _buildNavigationItem(
               icon: Icons.school,
               title: 'My Courses',
-              onTap: () => _navigateTo(context, 'courses'),
+              onTap: (){
+                Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const MyCourse()));
+              },
             ),
             _buildDivider(),
+            SizedBox(
+              height: 15,
+            ),
             _buildNavigationItem(
               icon: Icons.favorite,
               title: 'Wishlist',
               onTap: () => _navigateTo(context, 'wishlist'),
             ),
             _buildDivider(),
+            SizedBox(
+              height: 15,
+            ),
             _buildNavigationItem(
               icon: Icons.leaderboard,
               title: 'Leaderboard',
-                            onTap: () {
-                // Navigate to the ChangePasswordScreen
+              onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -121,11 +165,14 @@ class _AccountScreenState extends State<AccountScreen> {
               },
             ),
             _buildDivider(),
+            SizedBox(
+              height: 15,
+            ),
             _buildNavigationItem(
               icon: Icons.lock,
               title: 'Change Password',
               onTap: () {
-                // Navigate to the ChangePasswordScreen
+                // Navigate  the ChangePasswordScreen
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -135,6 +182,9 @@ class _AccountScreenState extends State<AccountScreen> {
               },
             ),
             _buildDivider(),
+            SizedBox(
+              height: 15,
+            ),
             _buildNavigationItem(
               icon: Icons.exit_to_app,
               title: 'Logout',
