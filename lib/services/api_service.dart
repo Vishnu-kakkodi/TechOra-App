@@ -116,7 +116,7 @@ Future<Map<String, String>> _getHeaders() async {
 }
 
 class ApiService {
-  static const String _baseUrl = "http://10.0.2.2:5000/api";
+  static const String _baseUrl = "https://api.techora.online/api";
   static const Map<String, String> roleHeader = {"role": "user"};
 
   static Future<Map<String, dynamic>> login(
@@ -279,6 +279,53 @@ class ApiService {
       return {
         "success": true,
         "data": jsonResponse['course'] ?? [],
+        "totalPages": jsonResponse['totalPages'],
+        "currentPage": jsonResponse['currentPage'],
+        "totalCourses": jsonResponse['totalCourses'],
+      };
+    } catch (error) {
+      return {"success": false, "message": "Error: $error"};
+    }
+  }
+
+
+
+    static Future<Map<String, dynamic>> fetchAllQuiz({
+    int? page,
+    int? limit,
+    String? search,
+    String? filter,
+    String? sort,
+  }) async {
+    print('$search,$filter,$sort,mmmmmmmmmmmmmmmmmm');
+    final queryParameters = {
+      if (page != null) 'page': page.toString(),
+      if (limit != null) 'limit': limit.toString(),
+      if (search != null && search.isNotEmpty)
+        'search': search
+      else
+        'search': '',
+      if (filter != null && filter.isNotEmpty)
+        'filter': filter
+      else
+        'filter': '',
+      if (sort != null && sort.isNotEmpty) 'sort': sort else 'sort': '',
+    };
+
+    final Uri url = Uri.parse('$_baseUrl/users/quiz-list').replace(
+      queryParameters: queryParameters,
+    );
+    final Map<String, String> headers = await _getHeaders();
+
+    try {
+      final response = await http.get(url, headers: headers);
+
+      final Map<String, dynamic> jsonResponse = json.decode(response.body);
+      print('🔍 API Response - Quiz List Data: $jsonResponse');
+      return {
+        "success": true,
+        "quiz": jsonResponse['quiz'] ?? [],
+        "department": jsonResponse['department'] ?? [],
         "totalPages": jsonResponse['totalPages'],
         "currentPage": jsonResponse['currentPage'],
         "totalCourses": jsonResponse['totalCourses'],

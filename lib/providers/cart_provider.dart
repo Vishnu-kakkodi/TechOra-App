@@ -8,6 +8,13 @@ class CartProvider with ChangeNotifier {
   bool hasError = false;
   String errorMessage = '';
 
+  void clearCart() {
+  cartItems = []; 
+  totalPrice = 0;
+  notifyListeners();
+}
+
+
   Future<void> fetchCartItem(String userId) async {
     isLoading = true;
     hasError = false;

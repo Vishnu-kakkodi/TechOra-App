@@ -63,13 +63,14 @@ void _handlePaymentSuccess(PaymentSuccessResponse response) async {
       const SnackBar(content: Text("Order Confirmed Successfully!")),
     );
 
+        Provider.of<CartProvider>(context, listen: false).clearCart();
+
+
     // ✅ Navigate to Payment Success Screen
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => OrderPlacedScreen(orderId: storedOrderId),
-      ),
-    );
+Navigator.push(
+  context,
+  MaterialPageRoute(builder: (context) => OrderPlacedScreen(orderId: storedOrderId)),
+);
   } else {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text("Failed to confirm order.")),
